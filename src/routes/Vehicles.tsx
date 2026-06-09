@@ -35,7 +35,7 @@ export default function Vehicles() {
   );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       <div className="flex-1 overflow-y-auto">
         {vehicles.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-400">
@@ -197,7 +197,7 @@ function VehicleForm() {
   }, [name, brand, model, plateNumber, isEdit, id, add, update, navigate]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
         {/* 车辆名称 */}
         <div className="flex flex-col gap-1.5">
