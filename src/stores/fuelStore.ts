@@ -86,6 +86,9 @@ export const useFuelStore = create<FuelStore>((set, get) => ({
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
+    // 累计统计（基于全部记录，按里程排序）
+    const byMileage = [...records].sort((a, b) => b.mileage - a.mileage);
+
     return {
       avgConsumption: consumptionCount > 0 ? totalConsumption / consumptionCount : null,
       totalCostThisMonth: thisMonth.reduce((sum, r) => sum + r.fuelCost, 0),
@@ -93,11 +96,10 @@ export const useFuelStore = create<FuelStore>((set, get) => ({
         thisMonthByDate.length >= 2
           ? thisMonthByDate[0].mileage - thisMonthByDate[thisMonthByDate.length - 1].mileage
           : 0,
-      // 累计统计
       totalCost: records.reduce((sum, r) => sum + r.fuelCost, 0),
       totalDistance:
-        records.length >= 2
-          ? fullTankRecords[0].mileage - fullTankRecords[fullTankRecords.length - 1].mileage
+        byMileage.length >= 2
+          ? byMileage[0].mileage - byMileage[byMileage.length - 1].mileage
           : 0,
       recordCount: records.length,
     };
