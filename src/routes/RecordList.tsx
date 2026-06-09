@@ -9,12 +9,18 @@ import ConfirmDialog from '../components/common/ConfirmDialog';
 import type { FilterPeriod } from '../components/records/FilterTabs';
 import type { FuelRecord } from '../types';
 
+function todayStr(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 export default function RecordList() {
   const navigate = useNavigate();
   const { activeVehicle } = useVehicles();
   const vehicleId = activeVehicle?.id ?? 1;
   const { records, remove } = useFuelRecords(vehicleId);
   const [filter, setFilter] = useState<FilterPeriod>('all');
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<FuelRecord | null>(null);
 
   // 按时间筛选
@@ -22,15 +28,24 @@ export default function RecordList() {
     const now = new Date();
     return records.filter((r) => {
       const d = new Date(r.date);
+
+      // 预设筛选
       if (filter === 'month')
         return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       if (filter === '3months') {
         const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
         return d >= threeMonthsAgo;
       }
+
+      // 自定义日期筛选
+      if (filter === 'custom') {
+        if (customStart && r.date < customStart) return false;
+        if (customEnd && r.date > customEnd) return false;
+      }
+
       return true;
     });
-  }, [records, filter]);
+  }, [records, filter, customStart, customEnd]);
 
   // 按日期分组（同一天合并为一组）
   const groupedRecords = useMemo(() => {
@@ -65,7 +80,44 @@ export default function RecordList() {
 
   return (
     <div className="flex flex-col h-full">
-      <FilterTabs active={filter} onChange={setFilter} />
+      <FilterTabs active={filter} onChange={(f) => {
+        setFilter(f);
+        if (f !== 'custom') { setCustomStart(''); setCustomEnd(''); }
+      }} />
+
+      {/* 自定义日期范围 */}
+      {filter === 'custom' && (
+        <div className="flex items-center gap-2 px-4 py-2">
+          <input
+            type="date"
+            value={customStart}
+            onChange={(e) => setCustomStart(e.target.value)}
+            max={customEnd || todayStr()}
+            className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700
+                       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            placeholder="开始日期"
+          />
+          <span className="text-gray-400 text-sm">至</span>
+          <input
+            type="date"
+            value={customEnd}
+            onChange={(e) => setCustomEnd(e.target.value)}
+            min={customStart}
+            max={todayStr()}
+            className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700
+                       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            placeholder="结束日期"
+          />
+          {(customStart || customEnd) && (
+            <button
+              onClick={() => { setCustomStart(''); setCustomEnd(''); }}
+              className="text-xs text-gray-400 active:text-gray-600 px-2 py-1"
+            >
+              清除
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto">
         {filteredRecords.length === 0 ? (
@@ -78,7 +130,6 @@ export default function RecordList() {
               </div>
               <div className="bg-white mx-4 rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3">
                 {group.records.map((record) => {
-                  // 在整个筛选结果中找上一条（时间更早的）传给 RecordCard 计算油耗
                   const recordIndex = filteredRecords.indexOf(record);
                   const prev = filteredRecords[recordIndex + 1];
                   return (

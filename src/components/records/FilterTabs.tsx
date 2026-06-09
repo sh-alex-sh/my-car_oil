@@ -1,4 +1,4 @@
-export type FilterPeriod = 'all' | 'month' | '3months';
+export type FilterPeriod = 'all' | 'month' | '3months' | 'custom';
 
 interface FilterTabsProps {
   active: FilterPeriod;
@@ -9,6 +9,7 @@ const TABS: { key: FilterPeriod; label: string }[] = [
   { key: 'all', label: '全部' },
   { key: 'month', label: '本月' },
   { key: '3months', label: '近3月' },
+  { key: 'custom', label: '自定义' },
 ];
 
 export default function FilterTabs({ active, onChange }: FilterTabsProps) {
