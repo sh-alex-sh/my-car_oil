@@ -43,7 +43,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* 摘要卡片 */}
+      {/* 摘要卡片 — 2行×3列 */}
       <div className="grid grid-cols-2 gap-3 px-4">
         <SummaryCard
           title="平均油耗"
@@ -63,10 +63,21 @@ export default function Dashboard() {
           color="amber"
         />
         <SummaryCard
+          title="累计油费"
+          value={`¥${stats.totalCost.toFixed(0)}`}
+          color="purple"
+        />
+        <SummaryCard
+          title="累计里程"
+          value={`${stats.totalDistance}`}
+          unit="km"
+          color="emerald"
+        />
+        <SummaryCard
           title="累计记录"
           value={`${stats.recordCount}`}
           unit="条"
-          color="purple"
+          color="blue"
         />
       </div>
 

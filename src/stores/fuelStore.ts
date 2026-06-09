@@ -93,6 +93,12 @@ export const useFuelStore = create<FuelStore>((set, get) => ({
         thisMonthByDate.length >= 2
           ? thisMonthByDate[0].mileage - thisMonthByDate[thisMonthByDate.length - 1].mileage
           : 0,
+      // 累计统计
+      totalCost: records.reduce((sum, r) => sum + r.fuelCost, 0),
+      totalDistance:
+        records.length >= 2
+          ? fullTankRecords[0].mileage - fullTankRecords[fullTankRecords.length - 1].mileage
+          : 0,
       recordCount: records.length,
     };
   },

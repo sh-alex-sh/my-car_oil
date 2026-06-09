@@ -25,10 +25,12 @@ export interface FuelRecordInput {
 
 // 首页统计数据
 export interface FuelStats {
-  avgConsumption: number | null;   // 平均油耗 L/100km，无数据时为 null
-  totalCostThisMonth: number;
-  totalDistanceThisMonth: number;
-  recordCount: number;
+  avgConsumption: number | null;   // 平均油耗 L/100km
+  totalCostThisMonth: number;      // 本月油费
+  totalDistanceThisMonth: number;  // 本月行驶里程
+  totalCost: number;               // 累计油费
+  totalDistance: number;           // 累计行驶里程（最新 - 最早）
+  recordCount: number;             // 累计记录
 }
 
 // 车辆信息（Phase 2 启用）
