@@ -1,0 +1,42 @@
+// 加油记录表
+export interface FuelRecord {
+  id?: number;
+  vehicleId: number;
+  date: string;        // ISO 8601, e.g. "2026-06-09"
+  mileage: number;     // 里程表读数，公里
+  fuelAmount: number;  // 加油量，升
+  fuelCost: number;    // 加油金额，元
+  fuelPrice: number;   // 单价 元/升，自动计算
+  isFullTank: boolean; // 是否加满
+  note: string;        // 备注
+  createdAt?: string;  // 创建时间 ISO 8601
+}
+
+// 新增/编辑记录时的输入
+export interface FuelRecordInput {
+  vehicleId: number;
+  date: string;
+  mileage: number;
+  fuelAmount: number;
+  fuelCost: number;
+  isFullTank: boolean;
+  note: string;
+}
+
+// 首页统计数据
+export interface FuelStats {
+  avgConsumption: number | null;   // 平均油耗 L/100km，无数据时为 null
+  totalCostThisMonth: number;
+  totalDistanceThisMonth: number;
+  recordCount: number;
+}
+
+// 车辆信息（Phase 2 启用）
+export interface Vehicle {
+  id?: number;
+  name: string;
+  brand: string;
+  model: string;
+  plateNumber: string;
+  isActive: boolean;
+}
