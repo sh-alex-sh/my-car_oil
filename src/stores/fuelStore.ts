@@ -91,7 +91,12 @@ export const useFuelStore = create<FuelStore>((set, get) => ({
 
     return {
       avgConsumption: consumptionCount > 0 ? totalConsumption / consumptionCount : null,
-      totalCostThisMonth: thisMonth.reduce((sum, r) => sum + r.fuelCost, 0),
+      // 平均油费 元/km = 累计油费 / 累计里程
+      avgCostPerKm:
+        byMileage.length >= 2 && byMileage[0].mileage > byMileage[byMileage.length - 1].mileage
+          ? records.reduce((sum, r) => sum + r.fuelCost, 0) /
+            (byMileage[0].mileage - byMileage[byMileage.length - 1].mileage)
+          : null,
       totalDistanceThisMonth:
         thisMonthByDate.length >= 2
           ? thisMonthByDate[0].mileage - thisMonthByDate[thisMonthByDate.length - 1].mileage

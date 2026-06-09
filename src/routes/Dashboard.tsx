@@ -43,7 +43,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* 摘要卡片 — 2行×3列 */}
+      {/* 摘要卡片 */}
       <div className="grid grid-cols-2 gap-3 px-4">
         <SummaryCard
           title="平均油耗"
@@ -52,8 +52,9 @@ export default function Dashboard() {
           color="emerald"
         />
         <SummaryCard
-          title="本月油费"
-          value={`¥${stats.totalCostThisMonth.toFixed(0)}`}
+          title="平均油费"
+          value={stats.avgCostPerKm !== null ? stats.avgCostPerKm.toFixed(2) : '--'}
+          unit="元/km"
           color="blue"
         />
         <SummaryCard

@@ -26,10 +26,10 @@ export interface FuelRecordInput {
 // 首页统计数据
 export interface FuelStats {
   avgConsumption: number | null;   // 平均油耗 L/100km
-  totalCostThisMonth: number;      // 本月油费
+  avgCostPerKm: number | null;     // 平均油费 元/km
   totalDistanceThisMonth: number;  // 本月行驶里程
   totalCost: number;               // 累计油费
-  totalDistance: number;           // 累计行驶里程（最新 - 最早）
+  totalDistance: number;           // 累计行驶里程（最新里程 - 最早里程）
   recordCount: number;             // 累计记录
 }
 
