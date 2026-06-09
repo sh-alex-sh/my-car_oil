@@ -24,6 +24,17 @@ function ListIcon() {
   );
 }
 
+function CarIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 17h14v-5H5v5zm11.5-8.5l1.5 3.5H6l1.5-3.5h9z" />
+      <circle cx="7" cy="17" r="1.5" />
+      <circle cx="17" cy="17" r="1.5" />
+      <path d="M3 12H2M22 12h-1" />
+    </svg>
+  );
+}
+
 function ChartIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,6 +59,7 @@ function SettingsIcon() {
 const TABS = [
   { path: '/', label: '首页', icon: HomeIcon },
   { path: '/records', label: '记录', icon: ListIcon },
+  { path: '/vehicles', label: '车辆', icon: CarIcon },
   { path: '/stats', label: '统计', icon: ChartIcon },
   { path: '/settings', label: '设置', icon: SettingsIcon },
 ] as const;

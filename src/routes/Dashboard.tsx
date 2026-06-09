@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFuelRecords } from '../hooks/useFuelRecords';
+import { useVehicles } from '../hooks/useVehicles';
 import SummaryCard from '../components/dashboard/SummaryCard';
 import RecentRecords from '../components/dashboard/RecentRecords';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -8,7 +9,9 @@ import type { FuelRecord } from '../types';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { records, stats, remove } = useFuelRecords(1);
+  const { activeVehicle } = useVehicles();
+  const vehicleId = activeVehicle?.id ?? 1;
+  const { records, stats, remove } = useFuelRecords(vehicleId);
   const [deleteTarget, setDeleteTarget] = useState<FuelRecord | null>(null);
 
   const handleDelete = useCallback(async () => {
@@ -20,6 +23,26 @@ export default function Dashboard() {
 
   return (
     <div className="py-4">
+      {/* 当前车辆标识 */}
+      {activeVehicle && (
+        <div className="px-4 mb-3">
+          <button
+            onClick={() => navigate('/vehicles')}
+            className="flex items-center gap-1.5 text-sm text-gray-500 active:text-primary-600 transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 17h14v-5H5v5zm11.5-8.5l1.5 3.5H6l1.5-3.5h9z" />
+              <circle cx="7" cy="17" r="1.5" />
+              <circle cx="17" cy="17" r="1.5" />
+            </svg>
+            <span>{activeVehicle.name}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* 摘要卡片 */}
       <div className="grid grid-cols-2 gap-3 px-4">
         <SummaryCard
