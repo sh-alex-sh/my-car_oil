@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFuelRecords } from '../hooks/useFuelRecords';
+import { useVehicles } from '../hooks/useVehicles';
 import RecordCard from '../components/records/RecordCard';
 import FilterTabs from '../components/records/FilterTabs';
 import EmptyState from '../components/records/EmptyState';
@@ -10,7 +11,9 @@ import type { FuelRecord } from '../types';
 
 export default function RecordList() {
   const navigate = useNavigate();
-  const { records, remove } = useFuelRecords(1);
+  const { activeVehicle } = useVehicles();
+  const vehicleId = activeVehicle?.id ?? 1;
+  const { records, remove } = useFuelRecords(vehicleId);
   const [filter, setFilter] = useState<FilterPeriod>('all');
   const [deleteTarget, setDeleteTarget] = useState<FuelRecord | null>(null);
 
@@ -70,13 +73,14 @@ export default function RecordList() {
         ) : (
           groupedRecords.map((group) => (
             <div key={group.date}>
-              {/* 日期分组标题（吸顶） */}
               <div className="sticky top-0 z-10 px-4 py-2 bg-gray-50/95 backdrop-blur-sm text-xs text-gray-500 font-medium">
                 {formatGroupDate(group.date)}
               </div>
               <div className="bg-white mx-4 rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3">
                 {group.records.map((record, i) => {
-                  const prev = group.records[i + 1];
+                  // 在整个筛选结果中找上一条（时间更早的）
+                  const recordIndex = filteredRecords.indexOf(record);
+                  const prev = filteredRecords[recordIndex + 1];
                   return (
                     <RecordCard
                       key={record.id}
@@ -94,7 +98,6 @@ export default function RecordList() {
         )}
       </div>
 
-      {/* 底部"新增"按钮 */}
       <div className="shrink-0 p-4 pb-20">
         <button
           onClick={() => navigate('/records/new')}

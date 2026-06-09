@@ -28,7 +28,8 @@ export default function RecentRecords({ records, onEdit, onDelete }: RecentRecor
           <p className="text-center text-gray-400 py-8 text-sm">暂无加油记录</p>
         ) : (
           recent.map((record, i) => {
-            const prev = recent[i + 1]; // 下一条 = 时间更早的
+            // 在全部记录中找上一条（时间更早的），跨分组准确
+            const prev = records[i + 1];
             return (
               <RecordCard
                 key={record.id}

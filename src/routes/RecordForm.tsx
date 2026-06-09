@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFuelRecords } from '../hooks/useFuelRecords';
+import { useVehicles } from '../hooks/useVehicles';
 import DatePicker from '../components/common/DatePicker';
 import NumberInput from '../components/common/NumberInput';
 import { validateRecord } from '../utils/validation';
@@ -16,7 +17,9 @@ export default function RecordForm() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEdit = !!id;
-  const { records, add, update } = useFuelRecords(1);
+  const { activeVehicle } = useVehicles();
+  const vehicleId = activeVehicle?.id ?? 1;
+  const { records, add, update } = useFuelRecords(vehicleId);
 
   const [date, setDate] = useState(todayStr());
   const [mileage, setMileage] = useState<number | ''>('');
@@ -67,7 +70,7 @@ export default function RecordForm() {
 
   const handleSave = useCallback(async () => {
     const data: FuelRecordInput = {
-      vehicleId: 1,
+      vehicleId,
       date,
       mileage: mileage === '' ? 0 : mileage,
       fuelAmount: fuelAmount === '' ? 0 : fuelAmount,
