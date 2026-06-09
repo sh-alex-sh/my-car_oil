@@ -77,8 +77,8 @@ export default function RecordList() {
                 {formatGroupDate(group.date)}
               </div>
               <div className="bg-white mx-4 rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3">
-                {group.records.map((record, i) => {
-                  // 在整个筛选结果中找上一条（时间更早的）
+                {group.records.map((record) => {
+                  // 在整个筛选结果中找上一条（时间更早的）传给 RecordCard 计算油耗
                   const recordIndex = filteredRecords.indexOf(record);
                   const prev = filteredRecords[recordIndex + 1];
                   return (

@@ -65,10 +65,10 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
         }`}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        onClick={() => swiped && setSwiped(false)}
+        onClick={() => swiped ? setSwiped(false) : onEdit(record)}
       >
         <div className="flex justify-between items-start">
-          <div>
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-gray-900">
                 {formatDateShort(record.date)}
@@ -79,10 +79,10 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
               )}
             </div>
             {record.note && (
-              <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[200px]">{record.note}</p>
+              <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[180px]">{record.note}</p>
             )}
           </div>
-          <div className="text-right">
+          <div className="text-right shrink-0 ml-2">
             <div className="text-sm text-gray-900 font-medium">
               {record.fuelAmount}L · {formatMoney(record.fuelCost)}
             </div>
@@ -90,6 +90,17 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
               {record.mileage.toLocaleString()} km
             </div>
           </div>
+          {/* 桌面删除按钮 */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(record); }}
+            className="ml-2 w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-400 active:bg-red-50 rounded-lg transition-colors shrink-0"
+            title="删除"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            </svg>
+          </button>
         </div>
         {consumption !== null && (
           <div className="mt-1 text-xs text-primary-600 font-medium">
