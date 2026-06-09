@@ -27,20 +27,17 @@ export default function RecentRecords({ records, onEdit, onDelete }: RecentRecor
         {recent.length === 0 ? (
           <p className="text-center text-gray-400 py-8 text-sm">暂无加油记录</p>
         ) : (
-          recent.map((record, i) => {
-            // 在全部记录中找上一条（时间更早的），跨分组准确
-            const prev = records[i + 1];
-            return (
-              <RecordCard
-                key={record.id}
-                record={record}
-                prevMileage={prev?.mileage}
-                prevIsFullTank={prev?.isFullTank}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            );
-          })
+          recent.map((record) => (
+            <RecordCard
+              key={record.id}
+              record={record}
+              prevMileage={records[records.indexOf(record) + 1]?.mileage}
+              prevIsFullTank={records[records.indexOf(record) + 1]?.isFullTank}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              readonly
+            />
+          ))
         )}
       </div>
     </div>

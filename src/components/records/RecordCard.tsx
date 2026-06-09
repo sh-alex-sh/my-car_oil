@@ -9,9 +9,10 @@ interface RecordCardProps {
   prevIsFullTank?: boolean;
   onEdit: (record: FuelRecord) => void;
   onDelete: (record: FuelRecord) => void;
+  readonly?: boolean;
 }
 
-export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit, onDelete }: RecordCardProps) {
+export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit, onDelete, readonly }: RecordCardProps) {
   const [swiped, setSwiped] = useState(false);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -65,7 +66,10 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
         }`}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        onClick={() => swiped ? setSwiped(false) : onEdit(record)}
+        onClick={() => {
+          if (readonly) return;
+          swiped ? setSwiped(false) : onEdit(record);
+        }}
       >
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
@@ -90,17 +94,18 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
               {record.mileage.toLocaleString()} km
             </div>
           </div>
-          {/* 桌面删除按钮 */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onDelete(record); }}
-            className="ml-2 w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-400 active:bg-red-50 rounded-lg transition-colors shrink-0"
-            title="删除"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-            </svg>
-          </button>
+          {!readonly && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onDelete(record); }}
+              className="ml-2 w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-400 active:bg-red-50 rounded-lg transition-colors shrink-0"
+              title="删除"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+              </svg>
+            </button>
+          )}
         </div>
         {consumption !== null && (
           <div className="mt-1 text-xs text-primary-600 font-medium">
