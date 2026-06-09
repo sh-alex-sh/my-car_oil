@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useVehicles } from '../hooks/useVehicles';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import type { Vehicle } from '../types';
@@ -7,10 +7,14 @@ import type { Vehicle } from '../types';
 export default function Vehicles() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const { vehicles, remove, setActive } = useVehicles();
 
-  // 如果有 :id 参数，进入表单模式
-  if (id) {
+  // 根据路径判断：列表页 / 表单页
+  const isNew = location.pathname === '/vehicles/new';
+  const isEdit = !!id;
+
+  if (isNew || isEdit) {
     return <VehicleForm />;
   }
 
