@@ -21,6 +21,12 @@ export default function RecordForm() {
   const vehicleId = activeVehicle?.id ?? 1;
   const { records, add, update } = useFuelRecords(vehicleId);
 
+  // 所有记录按日期降序排列（最新在前）
+  const sortedRecords = useMemo(
+    () => [...records].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [records]
+  );
+
   const [date, setDate] = useState(todayStr());
   const [mileage, setMileage] = useState<number | ''>('');
   const [fuelAmount, setFuelAmount] = useState<number | ''>('');
@@ -29,12 +35,6 @@ export default function RecordForm() {
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [saving, setSaving] = useState(false);
-
-  // 获取上一条记录的里程（用于自动填入和校验）
-  const lastMileage = useMemo(() => {
-    const sorted = [...records].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    return sorted[0]?.mileage;
-  }, [records]);
 
   // 编辑模式：加载已有数据
   useEffect(() => {
@@ -51,12 +51,42 @@ export default function RecordForm() {
     }
   }, [isEdit, id, records]);
 
-  // 新增模式：自动填入上次里程
-  useEffect(() => {
-    if (!isEdit && lastMileage && mileage === '') {
-      setMileage(lastMileage);
+  // 自动填入建议里程（智能算法）
+  const suggestionMileage = useMemo(() => {
+    if (sortedRecords.length === 0) return undefined;
+
+    if (isEdit && id) {
+      // 编辑模式：不自动改里程
+      return undefined;
     }
-  }, [isEdit, lastMileage]);
+
+    // 新增模式：
+    // - 往前补录（日期 < 最新记录）→ 取这条记录之前最近的那条里程
+    // - 正常往后新增（日期 >= 最新记录）→ 取最新里程
+    const latest = sortedRecords[0];
+    if (date >= latest.date) {
+      return latest.mileage;
+    }
+    // 补录：找日期 <= 所选日期的最近一条记录
+    const beforeRecord = sortedRecords.find((r) => r.date <= date);
+    return beforeRecord?.mileage ?? latest.mileage;
+  }, [sortedRecords, date, isEdit, id]);
+
+  // 新增模式：自动填入建议里程
+  useEffect(() => {
+    if (!isEdit && suggestionMileage !== undefined && mileage === '') {
+      setMileage(suggestionMileage);
+    }
+  }, [isEdit, suggestionMileage]);
+
+  // 选中日期对应的 nextMileage（校验用：补录时里程不能高于日期之后的记录）
+  const nextMileage = useMemo(() => {
+    // 找第一条日期 > 当前选中日期的记录
+    const next = [...sortedRecords]
+      .reverse() // 升序
+      .find((r) => r.date > date);
+    return next?.mileage;
+  }, [sortedRecords, date]);
 
   // 自动计算单价
   const fuelPrice = useMemo(() => {
@@ -67,6 +97,9 @@ export default function RecordForm() {
   }, [fuelCost, fuelAmount]);
 
   const getFieldError = (field: string) => errors.find((e) => e.field === field)?.message;
+
+  // 显示补录提示
+  const isBackfill = !isEdit && sortedRecords.length > 0 && date < sortedRecords[0].date;
 
   const handleSave = useCallback(async () => {
     const data: FuelRecordInput = {
@@ -79,7 +112,7 @@ export default function RecordForm() {
       note: note.trim(),
     };
 
-    const validationErrors = validateRecord(data, lastMileage);
+    const validationErrors = validateRecord(data, nextMileage);
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
       return;
@@ -98,13 +131,23 @@ export default function RecordForm() {
     } finally {
       setSaving(false);
     }
-  }, [date, mileage, fuelAmount, fuelCost, isFullTank, note, lastMileage, isEdit, id, add, update, navigate]);
+  }, [date, mileage, fuelAmount, fuelCost, isFullTank, note, nextMileage, isEdit, id, add, update, navigate]);
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
         {/* 日期 */}
         <DatePicker value={date} onChange={setDate} label="加油日期" />
+        {isBackfill && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span>补录模式：请填写加油时的实际里程表读数</span>
+          </div>
+        )}
 
         {/* 里程 */}
         <NumberInput
@@ -115,6 +158,11 @@ export default function RecordForm() {
           placeholder="里程表读数"
           error={getFieldError('mileage')}
         />
+        {suggestionMileage !== undefined && (
+          <p className="text-xs text-gray-400 -mt-3">
+            建议里程：{suggestionMileage.toLocaleString()} km（根据已有记录推算）
+          </p>
+        )}
 
         {/* 加油量 + 金额并排 */}
         <div className="grid grid-cols-2 gap-3">
