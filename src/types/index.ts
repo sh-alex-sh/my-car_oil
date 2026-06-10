@@ -44,3 +44,25 @@ export interface Vehicle {
   plateNumber: string;
   isActive: boolean;
 }
+
+// === Phase 2: 统计图表数据类型 ===
+
+/** 油耗趋势图单个数据点 */
+export interface TrendPoint {
+  date: string;          // "2026-06-09"
+  label: string;         // 短日期 "06-09"
+  mileage: number;       // 当前里程
+  consumption: number | null;  // L/100km (null = 无法计算)
+  isFullTank: boolean;
+  fuelAmount: number;
+  fuelCost: number;
+}
+
+/** 月度汇总图单个数据点 */
+export interface MonthlySummary {
+  month: string;         // "2026-06"
+  label: string;         // "6月"
+  totalFuelCost: number; // 月油费总额
+  totalDistance: number; // 月行驶里程
+  recordCount: number;   // 月记录条数
+}
