@@ -18,7 +18,10 @@
       "Bash(curl -s \"http://localhost:5174/#/vehicles/new\")",
       "Bash(curl -s \"http://localhost:5174/src/routes/Vehicles.tsx\")",
       "Bash(curl -s \"http://localhost:5174/src/hooks/useVehicles.ts\")",
-      "Bash(curl -s http://localhost:5174)"
+      "Bash(curl -s http://localhost:5174)",
+      "Read(//d/ai-project/**)",
+      "Bash(tar -czf \"my-car_oil-backup-$\\(date +%Y%m%d\\).tar.gz\" --exclude=\"node_modules\" --exclude=\"dist\" --exclude=\".git\" my-car_oil)",
+      "Bash(node -e ' *)"
     ]
   }
 }
