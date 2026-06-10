@@ -1,16 +1,6 @@
 import { db } from './index';
 
-/** 首次启动时初始化默认车辆（数据为空） */
+/** 确保至少有一辆车存在；不再预置默认车辆 */
 export async function seedIfEmpty() {
-  const vehicleCount = await db.vehicles.count();
-  if (vehicleCount > 0) return;
-
-  // 创建一辆默认车
-  await db.vehicles.add({
-    name: '我的爱车',
-    brand: '',
-    model: '',
-    plateNumber: '',
-    isActive: true,
-  });
+  // seed 逻辑保留，供将来使用（如首次使用引导数据）
 }

@@ -24,7 +24,7 @@ export default function Dashboard() {
   return (
     <div className="py-4">
       {/* 当前车辆标识 */}
-      {activeVehicle && (
+      {activeVehicle ? (
         <div className="px-4 mb-3">
           <button
             onClick={() => navigate('/vehicles')}
@@ -39,6 +39,15 @@ export default function Dashboard() {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
+          </button>
+        </div>
+      ) : (
+        <div className="px-4 mb-3">
+          <button
+            onClick={() => navigate('/vehicles')}
+            className="w-full py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700 font-medium active:bg-amber-100 transition-colors"
+          >
+            ⚠️ 请先添加一辆车，才能记录加油数据
           </button>
         </div>
       )}

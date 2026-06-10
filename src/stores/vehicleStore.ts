@@ -27,7 +27,7 @@ export const useVehicleStore = create<VehicleStore>((set, get) => ({
   addVehicle: async (data) => {
     const vehicle: Vehicle = {
       ...data,
-      isActive: get().vehicles.length === 0, // 第一辆车默认活跃
+      isActive: get().vehicles.length === 0,
     };
     const id = await db.vehicles.add(vehicle);
     await get().fetchVehicles();
@@ -42,10 +42,8 @@ export const useVehicleStore = create<VehicleStore>((set, get) => ({
   },
 
   deleteVehicle: async (id) => {
-    // 删除车辆时，同时删除该车所有加油记录
     await db.fuelRecords.where('vehicleId').equals(id).delete();
     await db.vehicles.delete(id);
-    // 如果删除的是活跃车辆，激活第一辆
     const state = get();
     if (state.vehicles.find((v) => v.id === id)?.isActive) {
       const remaining = state.vehicles.filter((v) => v.id !== id);
@@ -58,11 +56,9 @@ export const useVehicleStore = create<VehicleStore>((set, get) => ({
 
   setActive: async (id) => {
     const state = get();
-    // 先把所有车设为非活跃
     for (const v of state.vehicles) {
       if (v.id) await db.vehicles.update(v.id, { isActive: false });
     }
-    // 激活目标车辆
     await db.vehicles.update(id, { isActive: true });
     await get().fetchVehicles();
   },
