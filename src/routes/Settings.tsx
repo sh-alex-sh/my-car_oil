@@ -81,7 +81,7 @@ export default function Settings() {
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">关于</h3>
         </div>
         <div className="px-4 py-4">
-          <p className="text-sm text-gray-900 font-medium">我的油耗</p>
+          <p className="text-sm text-gray-900 font-medium">油耗记录</p>
           <p className="text-xs text-gray-400 mt-1">版本 0.1.0</p>
           <p className="text-xs text-gray-400 mt-2">
             纯本地存储，数据不上传服务器。<br />

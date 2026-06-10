@@ -18,7 +18,7 @@ function AppLayout() {
   const showTabBar = tabBarRoutes.includes(location.pathname);
 
   function getNavConfig(pathname: string) {
-    if (pathname === '/') return { title: '我的油耗', showBack: false };
+    if (pathname === '/') return { title: '油耗记录', showBack: false };
     if (pathname === '/records') return { title: '加油记录', showBack: false };
     if (pathname === '/records/new') return { title: '新增记录', showBack: true };
     if (pathname.startsWith('/records/') && pathname !== '/records/new')
@@ -29,7 +29,7 @@ function AppLayout() {
       return { title: '编辑车辆', showBack: true };
     if (pathname === '/stats') return { title: '统计', showBack: false };
     if (pathname === '/settings') return { title: '设置', showBack: false };
-    return { title: '我的油耗', showBack: false };
+    return { title: '油耗记录', showBack: false };
   }
 
   const nav = getNavConfig(location.pathname);

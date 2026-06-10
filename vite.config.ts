@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon-192.svg', 'icon-512.svg'],
       manifest: {
-        name: '我的油耗',
+        name: '油耗记录',
         short_name: '油耗',
         description: '个人车辆油耗统计应用',
         theme_color: '#059669',
