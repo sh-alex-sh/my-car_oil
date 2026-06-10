@@ -7,6 +7,7 @@ export interface FuelRecord {
   fuelAmount: number;  // 加油量，升
   fuelCost: number;    // 加油金额，元
   fuelPrice: number;   // 单价 元/升，自动计算
+  fuelGrade: string;   // 油品标号，如 "92#"、"95#"、"98#"、"0#"
   isFullTank: boolean; // 是否加满
   note: string;        // 备注
   createdAt?: string;  // 创建时间 ISO 8601
@@ -19,6 +20,7 @@ export interface FuelRecordInput {
   mileage: number;
   fuelAmount: number;
   fuelCost: number;
+  fuelGrade: string;
   isFullTank: boolean;
   note: string;
 }

@@ -31,6 +31,7 @@ export default function RecordForm() {
   const [mileage, setMileage] = useState<number | ''>('');
   const [fuelAmount, setFuelAmount] = useState<number | ''>('');
   const [fuelCost, setFuelCost] = useState<number | ''>('');
+  const [fuelGrade, setFuelGrade] = useState('92#');
   const [isFullTank, setIsFullTank] = useState(true);
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -45,6 +46,7 @@ export default function RecordForm() {
         setMileage(record.mileage);
         setFuelAmount(record.fuelAmount);
         setFuelCost(record.fuelCost);
+        setFuelGrade(record.fuelGrade || '92#');
         setIsFullTank(record.isFullTank);
         setNote(record.note);
       }
@@ -108,6 +110,7 @@ export default function RecordForm() {
       mileage: mileage === '' ? 0 : mileage,
       fuelAmount: fuelAmount === '' ? 0 : fuelAmount,
       fuelCost: fuelCost === '' ? 0 : fuelCost,
+      fuelGrade,
       isFullTank,
       note: note.trim(),
     };
@@ -131,7 +134,7 @@ export default function RecordForm() {
     } finally {
       setSaving(false);
     }
-  }, [date, mileage, fuelAmount, fuelCost, isFullTank, note, nextMileage, isEdit, id, add, update, navigate]);
+  }, [date, mileage, fuelAmount, fuelCost, fuelGrade, isFullTank, note, nextMileage, isEdit, id, add, update, navigate]);
 
   return (
     <div className="flex flex-col h-full">
@@ -193,6 +196,27 @@ export default function RecordForm() {
           </div>
         )}
 
+        {/* 油品标号 */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-gray-500">油品标号</label>
+          <div className="grid grid-cols-4 gap-2">
+            {['92#', '95#', '98#', '0#'].map((grade) => (
+              <button
+                key={grade}
+                type="button"
+                onClick={() => setFuelGrade(grade)}
+                className={`py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  fuelGrade === grade
+                    ? 'bg-primary-500 text-white shadow-sm'
+                    : 'bg-gray-50 text-gray-600 border border-gray-200 active:bg-gray-100'
+                }`}
+              >
+                {grade}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* 加满开关 */}
         <div className="flex items-center justify-between py-2">
           <span className="text-sm font-medium text-gray-500">本次加满</span>
@@ -205,8 +229,8 @@ export default function RecordForm() {
             aria-checked={isFullTank}
           >
             <span
-              className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${
-                isFullTank ? 'translate-x-6' : 'translate-x-0.5'
+              className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${
+                isFullTank ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
           </button>

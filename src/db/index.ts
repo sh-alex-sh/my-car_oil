@@ -12,6 +12,11 @@ export class CarOilDB extends Dexie {
       fuelRecords: '++id, vehicleId, date, mileage',
       vehicles: '++id',
     });
+    // v2: 添加 fuelGrade 字段
+    this.version(2).stores({
+      fuelRecords: '++id, vehicleId, date, mileage, fuelGrade',
+      vehicles: '++id',
+    });
   }
 }
 

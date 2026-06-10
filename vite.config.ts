@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  /* Capacitor 兼容：相对路径确保 file:// 协议下资源正确加载 */
+  base: './',
   plugins: [
     react(),
     VitePWA({

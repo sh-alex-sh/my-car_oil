@@ -36,12 +36,12 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative">
       {/* 左滑露出操作按钮 */}
-      <div className="absolute right-0 top-0 bottom-0 flex">
+      <div className="absolute right-0 top-0 bottom-0 flex z-0">
         <button
           onClick={() => { onEdit(record); setSwiped(false); }}
-          className="w-16 bg-primary-500 text-white flex items-center justify-center active:bg-primary-600 transition-colors"
+          className="w-16 h-full bg-primary-500 text-white flex items-center justify-center active:bg-primary-600 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
@@ -50,7 +50,7 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
         </button>
         <button
           onClick={() => { onDelete(record); setSwiped(false); }}
-          className="w-16 bg-red-500 text-white flex items-center justify-center active:bg-red-600 transition-colors"
+          className="w-16 h-full bg-red-500 text-white flex items-center justify-center active:bg-red-600 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="3 6 5 6 21 6" />
@@ -61,43 +61,46 @@ export default function RecordCard({ record, prevMileage, prevIsFullTank, onEdit
 
       {/* 卡片主体 */}
       <div
-        className={`relative bg-white border-b border-gray-50 px-4 py-3 transition-transform duration-200 ${
+        className={`relative bg-white border-b border-gray-50 px-3 py-2.5 transition-transform duration-200 z-10 ${
           swiped ? '-translate-x-32' : 'translate-x-0'
         }`}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
+        onTouchStart={!readonly ? onTouchStart : undefined}
+        onTouchEnd={!readonly ? onTouchEnd : undefined}
         onClick={() => {
           if (readonly) return;
           swiped ? setSwiped(false) : onEdit(record);
         }}
       >
-        <div className="flex justify-between items-start">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-900">
+        <div className="flex justify-between items-start gap-1 flex-nowrap">
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <div className="flex flex-wrap items-center gap-1">
+              <span className="text-sm font-medium text-gray-900 whitespace-nowrap shrink-0">
                 {formatDateShort(record.date)}
               </span>
-              <span className="text-xs text-gray-400">{formatDayOfWeek(record.date)}</span>
+              <span className="text-xs text-gray-400 whitespace-nowrap shrink-0">{formatDayOfWeek(record.date)}</span>
+              {record.fuelGrade && (
+                <span className="bg-blue-50 text-blue-600 px-1 py-0.5 rounded text-[11px] leading-none shrink-0">{record.fuelGrade}</span>
+              )}
               {record.isFullTank && (
-                <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">加满</span>
+                <span className="bg-green-50 text-green-600 px-1 py-0.5 rounded text-[11px] leading-none shrink-0">加满</span>
               )}
             </div>
             {record.note && (
-              <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[180px]">{record.note}</p>
+              <p className="text-xs text-gray-500 mt-0.5 truncate">{record.note}</p>
             )}
           </div>
-          <div className="text-right shrink-0 ml-2">
-            <div className="text-sm text-gray-900 font-medium">
+          <div className="text-right shrink-0 basis-auto">
+            <div className="text-sm text-gray-900 font-medium whitespace-nowrap">
               {record.fuelAmount}L · {formatMoney(record.fuelCost)}
             </div>
-            <div className="text-xs text-gray-400 mt-0.5">
+            <div className="text-xs text-gray-400 mt-0.5 whitespace-nowrap">
               {record.mileage.toLocaleString()} km
             </div>
           </div>
           {!readonly && (
             <button
               onClick={(e) => { e.stopPropagation(); onDelete(record); }}
-              className="ml-2 w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-400 active:bg-red-50 rounded-lg transition-colors shrink-0"
+              className="w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-400 active:bg-red-50 rounded-lg transition-colors shrink-0 self-start"
               title="删除"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

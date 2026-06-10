@@ -51,6 +51,7 @@ export default function Settings() {
         '加油量 (L)': 'fuelAmount',
         '金额 (¥)': 'fuelCost',
         '单价 (¥/L)': 'fuelPrice',
+        '油品标号': 'fuelGrade',
         '是否加满': 'isFullTank',
         '备注': 'note',
       };
@@ -107,6 +108,7 @@ export default function Settings() {
             fuelAmount,
             fuelCost,
             fuelPrice,
+            fuelGrade: colIndex.fuelGrade !== undefined ? String(row[colIndex.fuelGrade] ?? '') : '',
             isFullTank: colIndex.isFullTank !== undefined
               ? (String(row[colIndex.isFullTank]).trim() === '是' || String(row[colIndex.isFullTank]).trim() === 'true')
               : true,
