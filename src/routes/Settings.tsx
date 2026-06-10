@@ -1,16 +1,17 @@
+import { db } from '../db';
 import { useFuelRecords } from '../hooks/useFuelRecords';
 import { useExport } from '../hooks/useExport';
 
 export default function Settings() {
-  const { records } = useFuelRecords(1);
   const { exportToExcel } = useExport();
 
-  const handleExport = () => {
-    if (records.length === 0) {
+  const handleExport = async () => {
+    const allRecords = await db.fuelRecords.toArray();
+    if (allRecords.length === 0) {
       alert('暂无加油记录可导出');
       return;
     }
-    exportToExcel(records);
+    exportToExcel(allRecords);
   };
 
   return (
