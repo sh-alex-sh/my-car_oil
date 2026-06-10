@@ -6,6 +6,7 @@ import Dashboard from './routes/Dashboard';
 import RecordList from './routes/RecordList';
 import RecordForm from './routes/RecordForm';
 import Vehicles from './routes/Vehicles';
+import VehicleForm from './routes/VehicleForm';
 import Stats from './routes/Stats';
 import Settings from './routes/Settings';
 import { seedIfEmpty } from './db/seed';
@@ -43,8 +44,8 @@ function AppLayout() {
           <Route path="/records/new" element={<RecordForm />} />
           <Route path="/records/:id" element={<RecordForm />} />
           <Route path="/vehicles" element={<Vehicles />} />
-          <Route path="/vehicles/new" element={<Vehicles />} />
-          <Route path="/vehicles/:id" element={<Vehicles />} />
+          <Route path="/vehicles/new" element={<VehicleForm />} />
+          <Route path="/vehicles/:id" element={<VehicleForm />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
