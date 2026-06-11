@@ -5,3 +5,6 @@ dist/
 # Capacitor 原生构建产物（本地生成，不提交）
 android/
 ios/
+# Claude Code 本地配置（个人专属，不提交）
+.claude/
+dev-dist/
