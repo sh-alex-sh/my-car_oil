@@ -1,4 +1,6 @@
 import * as XLSX from 'xlsx';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import type { FuelRecord } from '../types';
 import { formatDate } from '../utils/format';
 
@@ -24,23 +26,24 @@ export function useExport() {
 
     const outputFilename = filename || `油耗记录_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
-    // 尝试 Capacitor 原生导出
-    if ((window as any).Capacitor?.isNative?.()) {
+    // 检测 Capacitor 原生环境（Capacitor 8 用 isNativePlatform）
+    const cap = (window as any).Capacitor;
+    const isNative = cap?.isNativePlatform?.() ?? false;
+
+    if (isNative) {
       try {
-        const { Filesystem, Directory } = await import('@capacitor/filesystem');
-        const { Share } = await import('@capacitor/share');
         const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array', bookSST: false });
         const base64 = arrayBufferToBase64(wbout);
         const writeResult = await Filesystem.writeFile({
           path: outputFilename,
           data: base64,
-          directory: Directory.Data,
+          directory: Directory.Cache,
           recursive: true,
         });
         await Share.share({
           title: '油耗记录',
           text: '油耗记录 Excel',
-          url: writeResult.uri,
+          files: [writeResult.uri],
           dialogTitle: '导出',
         });
         return;
@@ -50,7 +53,7 @@ export function useExport() {
       }
     }
 
-    // 浏览器回退
+    // 浏览器环境回退
     XLSX.writeFile(wb, outputFilename);
   };
 

@@ -76,35 +76,42 @@ export const useFuelStore = create<FuelStore>((set, get) => ({
       }
     }
 
-    // 本月统计
+    // 本月统计：本月最大里程 - 上月最大里程（跨月结转）
     const now = new Date();
-    const thisMonth = records.filter((r) => {
-      const d = new Date(r.date);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    });
-    const thisMonthByDate = [...thisMonth].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    const thisMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthStr = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
 
-    // 累计统计（基于全部记录，按里程排序）
-    const byMileage = [...records].sort((a, b) => b.mileage - a.mileage);
+    const allByMileage = [...records].sort((a, b) => b.mileage - a.mileage);
+    const thisMonthMax = allByMileage.find((r) => r.date.startsWith(thisMonthStr))?.mileage;
+    // 上月最大里程：优先从上月记录中找，没找到则取本月最小里程之前的最大里程
+    let lastMonthMax = allByMileage.find((r) => r.date.startsWith(lastMonthStr))?.mileage;
+    if (lastMonthMax === undefined && thisMonthMax !== undefined) {
+      // 历史无上月记录时，取本月里程最小值（兼容初次使用及跨月无记录）
+      lastMonthMax = Math.min(
+        ...records
+          .filter((r) => r.date.startsWith(thisMonthStr))
+          .map((r) => r.mileage)
+      );
+    }
+    const totalDistanceThisMonth =
+      thisMonthMax !== undefined && lastMonthMax !== undefined && thisMonthMax > lastMonthMax
+        ? thisMonthMax - lastMonthMax
+        : 0;
 
+    // 累计统计（基于全部记录）
     return {
       avgConsumption: consumptionCount > 0 ? totalConsumption / consumptionCount : null,
-      // 平均油费 元/km = 累计油费 / 累计里程
       avgCostPerKm:
-        byMileage.length >= 2 && byMileage[0].mileage > byMileage[byMileage.length - 1].mileage
+        allByMileage.length >= 2 && allByMileage[0].mileage > allByMileage[allByMileage.length - 1].mileage
           ? records.reduce((sum, r) => sum + r.fuelCost, 0) /
-            (byMileage[0].mileage - byMileage[byMileage.length - 1].mileage)
+            (allByMileage[0].mileage - allByMileage[allByMileage.length - 1].mileage)
           : null,
-      totalDistanceThisMonth:
-        thisMonthByDate.length >= 2
-          ? thisMonthByDate[0].mileage - thisMonthByDate[thisMonthByDate.length - 1].mileage
-          : 0,
+      totalDistanceThisMonth,
       totalCost: records.reduce((sum, r) => sum + r.fuelCost, 0),
       totalDistance:
-        byMileage.length >= 2
-          ? byMileage[0].mileage - byMileage[byMileage.length - 1].mileage
+        allByMileage.length >= 2
+          ? allByMileage[0].mileage - allByMileage[allByMileage.length - 1].mileage
           : 0,
       recordCount: records.length,
     };

@@ -222,7 +222,7 @@ export default function Settings() {
         />
       </div>
 
-      {/* Phase 2 / 3 占位 */}
+      {/* Phase 3 占位 */}
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 opacity-50 pointer-events-none">
         <div className="px-4 py-3 border-b border-gray-50">
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">更多功能</h3>
@@ -237,19 +237,6 @@ export default function Settings() {
           <div>
             <p className="text-sm font-medium text-gray-900">保养提醒</p>
             <p className="text-xs text-gray-400">Phase 3 即将上线</p>
-          </div>
-        </div>
-        <div className="px-4 py-4 flex items-center gap-3 border-t border-gray-50">
-          <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-              <line x1="18" y1="20" x2="18" y2="10" />
-              <line x1="12" y1="20" x2="12" y2="4" />
-              <line x1="6" y1="20" x2="6" y2="14" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-900">统计图表</p>
-            <p className="text-xs text-gray-400">Phase 2 即将上线</p>
           </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ export function useStatsData(records: FuelRecord[]) {
     });
   }, [records]);
 
-  /** 月度汇总数据 — 按 YYYY-MM 分组聚合 */
+  /** 月度汇总数据 — 按 YYYY-MM 分组聚合，里程跨月结转 */
   const monthlyData = useMemo<MonthlySummary[]>(() => {
     const map = new Map<string, FuelRecord[]>();
     for (const r of records) {
@@ -40,14 +40,25 @@ export function useStatsData(records: FuelRecord[]) {
     const months = Array.from(map.keys()).sort(); // 升序
     if (months.length === 0) return [];
 
-    // 取全部月份（记录不会太多，不需要限 12）
-    return months.map((month) => {
+    // 预计算每个月份的最大里程和最小里程
+    const monthStats = new Map<string, { max: number; min: number }>();
+    for (const month of months) {
       const items = map.get(month)!;
-      const sorted = items.sort((a, b) => b.mileage - a.mileage);
-      const distance =
-        sorted.length >= 2
-          ? sorted[0].mileage - sorted[sorted.length - 1].mileage
-          : 0;
+      monthStats.set(month, {
+        max: Math.max(...items.map((r) => r.mileage)),
+        min: Math.min(...items.map((r) => r.mileage)),
+      });
+    }
+
+    return months.map((month, i) => {
+      const items = map.get(month)!;
+      const { max: endMileage } = monthStats.get(month)!;
+      // 起始里程取上月最大里程（跨月结转），首个有数据的月份用当前月最小里程
+      const startMileage =
+        i > 0
+          ? monthStats.get(months[i - 1])!.max
+          : monthStats.get(month)!.min;
+      const distance = endMileage > startMileage ? endMileage - startMileage : 0;
 
       const d = new Date(month + '-01');
       return {
